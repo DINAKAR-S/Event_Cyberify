@@ -1,32 +1,28 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// Define public routes
-const isPublicRoute = createRouteMatcher(['/', '/events/:id', '/api/webhook/clerk', '/api/webhook/stripe', '/api/uploadthing']);
+const publicRoutes = [
+    '/',
+    '/events/:id',
+    '/api/webhook/clerk',
+    '/api/webhook/stripe',
+    '/api/uploadthing',
+];
 
-// Define ignored routes (e.g., health check APIs, static files)
-const ignoreRoutes = createRouteMatcher(['/api/webhook/clerk', '/api/webhook/stripe', '/api/uploadthing']);
+const ignoredRoutes = [
+    '/api/webhook/clerk',
+    '/api/webhook/stripe',
+    '/api/uploadthing',
+];
 
-export default clerkMiddleware((auth, request) => {
-  const { pathname } = request.nextUrl;
+const routerMatcher = createRouteMatcher({
+    publicRoutes,
+    ignoredRoutes,
+});
 
-  // If the route is in the ignored routes, skip Clerk middleware logic
-  if (ignoreRoutes(request)) {
-    return; // Ignore these routes, no authentication checks applied
-  }
-
-  // If the route is public, allow access without protection
-  if (isPublicRoute(request)) {
-    return;
-  }
-
-  // For all other routes, enforce protection
-  auth().protect();
+export default clerkMiddleware({
+    matcher: routerMatcher,
 });
 
 export const config = {
-  matcher: [
-    // Middleware will apply to all routes except for static assets and internals
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/api(.*)',
-  ],
+    matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 };
