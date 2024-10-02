@@ -1,4 +1,4 @@
-// File: D:\Documents\SEM 7\WAS_VAPT_Project\cyberify\app\layout.tsx
+// File: C:\Users\DINAKAR S\Downloads\cyberify\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
